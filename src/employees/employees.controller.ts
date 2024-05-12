@@ -5,6 +5,7 @@ import { Employee } from './schemas/employee.schema'
 import { SuccessResponse, AppResponseInterface } from 'src/response/app-response'
 import { ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
 import { PaginationResponse } from 'src/response/pagination-response'
+import { BulkUpdateDto } from './dto/bulk-update.dto'
 
 @ApiTags('Employees')
 @Controller('employees')
@@ -95,38 +96,47 @@ export class EmployeesController {
         return new SuccessResponse(data)
     }
     
-    @Put(':id')
-    @ApiOperation({ summary: 'Update an existing employee' })
+    @Put()
+    @ApiOperation({ summary: 'Update existing employees' })
     @ApiParam({ name: 'id', description: 'Employee ID' })
     @ApiBody({ 
         description: 'Updated data for the employee',
         schema: {
-            example: {
-                "firstName": "john",
-                "lastName": "smithh",
-                "position": "Janitor",
-                "phone": "0123456789",
-                "email": "sarno@gmail.com",
-            }
+            example: [
+                {
+                    "id": "6640dbdf9c0c487fcc041e70",
+                    "data": {
+                        "firstName": "Agung",
+                        "lastName": "Jaya",
+                        "position": "security",
+                        "phone": "0123456789",
+                        "email": "agung@gmail.com"
+                    }
+                },
+                {
+                    "id": "6640ad082a5e9cf27c06a4fd",
+                    "data": {
+                        "firstName": "John",
+                        "lastName": "Smith",
+                        "position": "Janitor",
+                        "phone": "0123456789",
+                        "email": "sarno@gmail.com"
+                    }
+                }
+            ]
         },
     })
     @ApiOkResponse({ 
         description: 'Employee updated successfully',
         schema: {
             example: {
-                "_id": "6640ad082a5e9cf27c06a4fd",
-                "firstName": "john",
-                "lastName": "smithh",
-                "position": "Janitor",
-                "phone": "0123456789",
-                "email": "sarno@gmail.com",
-                "__v": 0
+                data: null
             }
         }
     })
-    async update(@Param('id') id: string, @Body() updateEmplosyeeDto: CreateEmployeeDto) : Promise<AppResponseInterface<Employee>> {
-        const data = await this.employeesService.update(id, updateEmplosyeeDto)
-        return new SuccessResponse(data)
+    async bulkUpdate(@Body() bulkUpdateDto: BulkUpdateDto[]): Promise<AppResponseInterface<any>> {
+        await this.employeesService.bulkUpdate(bulkUpdateDto)
+        return new SuccessResponse(null)
     }
 
     @Delete(':id')

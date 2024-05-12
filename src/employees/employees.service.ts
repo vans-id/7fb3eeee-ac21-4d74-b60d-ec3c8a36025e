@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Employee, EmployeeDocument } from './schemas/employee.schema';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { PaginationResponse } from 'src/response/pagination-response';
+import { BulkUpdateDto } from './dto/bulk-update.dto';
 
 
 @Injectable()
@@ -40,22 +41,15 @@ export class EmployeesService {
         }
     }
 
-    async update(id: string, employee: CreateEmployeeDto): Promise<Employee> {
-        try {
-            const updatedEmployee = await this.employeeModel.findByIdAndUpdate(id, employee);
-            if (!updatedEmployee) {
-                throw new NotFoundException();
+    async bulkUpdate(bulkUpdateDto: BulkUpdateDto[]): Promise<void> {
+        const bulkOps = bulkUpdateDto.map(({ id, data }) => ({
+            updateOne: {
+                filter: { _id: id },
+                update: data
             }
-            return updatedEmployee;
-        } catch (error) {
-            if (error.name === 'CastError') {
-                throw new BadRequestException('Invalid employee ID');
-            } else if (error instanceof NotFoundException) {
-                throw new NotFoundException('Employee not found');
-            } else {
-                throw new InternalServerErrorException('Failed to update employee');
-            }
-        }
+        }));
+      
+        await this.employeeModel.bulkWrite(bulkOps)
     }
 
     async delete(id: string): Promise<Employee> {
