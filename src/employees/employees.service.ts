@@ -1,26 +1,31 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-// import { Employee } from './interfaces/employee.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Employee, EmployeeDocument } from './schemas/employee.schema';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { PaginationResponse } from 'src/response/pagination-response';
 
 
 @Injectable()
 export class EmployeesService {
     constructor(@InjectModel(Employee.name) private readonly employeeModel: Model<EmployeeDocument>) {}
 
-    async findAll(sortBy: string): Promise<Employee[]> {
+    async findAll(sortOptions: any, page: number, perPage: number): Promise<PaginationResponse<Employee>> {
         try {
-            const items = await this.employeeModel.find().sort(sortBy).exec();
-            return items;
+            const items = await this.employeeModel.find()
+                .sort(sortOptions)
+                .skip((page - 1) * perPage)
+                .limit(perPage)
+                .exec();
+    
+            const totalItems = await this.employeeModel.countDocuments().exec();
+            const totalPage = Math.ceil(totalItems / perPage);
+        
+            return { items, totalItems, totalPage };
         } catch (error) {
-            throw new BadRequestException('Failed to fetch items');
+            throw new InternalServerErrorException('Failed to fetch employees');
         }
     }
-    // async findAll(): Promise<Employee[]> {
-    //     return await this.employeeModel.find()
-    // }
 
     async create(employee: CreateEmployeeDto): Promise<Employee> {
         try {
