@@ -1,33 +1,23 @@
-// import * as mongoose from 'mongoose';
-
-// export const EmployeeSchema = new mongoose.Schema({
-//     firstName: String,
-//     lastName: String,
-//     position: String,
-//     phone: String,
-//     email: String,
-// })
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export type EmployeeDocument = Employee & Document;
 
 @Schema()
 export class Employee {
-  @Prop()
-  firstName: string;
+    @Prop({ required: true })
+    firstName: string;
 
-  @Prop()
-  lastName: string;
+    @Prop({ required: true })
+    lastName: string;
 
-  @Prop()
-  position: string;
+    @Prop({ required: true })
+    position: string;
 
-  @Prop()
-  phone: string;
+    @Prop({ required: true })
+    phone: string;
 
-  @Prop()
-  email: string;
+    @Prop({ unique: true, required: true })
+    email: string;
 }
 
 export const EmployeeSchema = SchemaFactory.createForClass(Employee);
