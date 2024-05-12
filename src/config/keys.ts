@@ -1,3 +1,3 @@
 export default {
-    mongoURI: 'mongodb://root:example@localhost:27017/'
+    mongoURI: 'mongodb://root:example@localhost:27017'
 }

@@ -1,28 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { Employee } from './interfaces/employee.interface';
+// import { Employee } from './interfaces/employee.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Employee, EmployeeDocument } from './schemas/employee.schema';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
+
 
 @Injectable()
 export class EmployeesService {
-    private readonly items: Employee[] = [
-        {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Sarno',
-            position: 'CEO',
-            email: 'sarno@gmail.com',
-            phone: '0123456789',
-        },
-        {
-            id: '2',
-            firstName: 'John',
-            lastName: 'Smith',
-            position: 'CTO',
-            email: 'smith@gmail.com',
-            phone: '0123456789',
-        },
-    ]
+    constructor(@InjectModel(Employee.name) private readonly employeeModel: Model<EmployeeDocument>) {}
+    // constructor(@InjectModel('Employee') private readonly employeeModel: Model<Employee>) {}
 
-    findAll(): Employee[] {
-        return this.items
+    findAll(): Promise<Employee[]> {
+        return this.employeeModel.find()
+    }
+
+    create(employee: CreateEmployeeDto): Promise<Employee> {
+        const newEmployee = new this.employeeModel(employee)
+        return newEmployee.save()
+    }
+
+    update(id: string, employee: CreateEmployeeDto): Promise<Employee> {
+        return this.employeeModel.findByIdAndUpdate(id, employee, {new: true})
+    }
+
+    delete(id: string): Promise<Employee> {
+        return this.employeeModel.findByIdAndDelete(id)
     }
 }
