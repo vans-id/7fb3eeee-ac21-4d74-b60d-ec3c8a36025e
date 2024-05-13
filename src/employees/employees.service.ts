@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Employee, EmployeeDocument } from './schemas/employee.schema';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { PaginationResponse } from 'src/response/pagination-response';
@@ -42,12 +42,20 @@ export class EmployeesService {
     }
 
     async bulkUpdate(bulkUpdateDto: BulkUpdateDto[]): Promise<void> {
-        const bulkOps = bulkUpdateDto.map(({ id, data }) => ({
-            updateOne: {
-                filter: { _id: id },
-                update: data
-            }
-        }));
+        const bulkOps = bulkUpdateDto.map((item) => {
+            const updateData = { ...item };
+            delete updateData._id;
+        
+            const filter = item._id ? { _id: new mongoose.Types.ObjectId(item._id) } : {};
+        
+            return {
+              updateOne: {
+                filter,
+                update: updateData,
+                upsert: true,
+              },
+            };
+        });
       
         await this.employeeModel.bulkWrite(bulkOps)
     }

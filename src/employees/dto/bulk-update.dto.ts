@@ -1,8 +1,35 @@
-import { IsNotEmpty } from "class-validator"
+// import { IsNotEmpty } from "class-validator"
+
+// export class BulkUpdateDto {
+//     @IsNotEmpty()
+//     id: string 
+//     @IsNotEmpty()
+//     data: object
+// }
+
+import { IsNotEmpty, IsString, IsEmail, IsOptional } from 'class-validator';
 
 export class BulkUpdateDto {
-    @IsNotEmpty()
-    id: string 
-    @IsNotEmpty()
-    data: object
+  @IsNotEmpty()
+  _id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  position: string;
+
+  @IsOptional()
+  @IsString()
+  phone: string;
+
+  @IsOptional()
+  @IsEmail()
+  email: string;
 }
