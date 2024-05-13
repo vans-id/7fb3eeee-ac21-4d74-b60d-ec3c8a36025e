@@ -29,10 +29,11 @@ export class EmployeesService {
 
     async bulkUpdate(bulkUpdateDto: BulkUpdateDto[]): Promise<void> {
         const bulkOps = bulkUpdateDto.map((item) => {
+            console.log(item)
             const updateData = { ...item };
             delete updateData._id;
         
-            const filter = item._id ? { _id: new mongoose.Types.ObjectId(item._id) } : {};
+            const filter = { _id: item._id ? new mongoose.Types.ObjectId(item._id) : undefined };
         
             return {
               updateOne: {
