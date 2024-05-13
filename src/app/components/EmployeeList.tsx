@@ -51,6 +51,12 @@ export default function EmployeeList() {
       if (!results.hasOwnProperty("data")) {
         throw new Error("failed to fetch data");
       }
+
+      Swal.fire({
+        title: "Success!",
+        text: "Data has been saved",
+        icon: "success",
+      });
     } catch (error: any) {
       console.log(error);
       Swal.fire({
