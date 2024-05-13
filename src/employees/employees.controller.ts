@@ -60,41 +60,6 @@ export class EmployeesController {
 
         return new SuccessResponse(data)
     }
-
-    @Post()
-    @ApiOperation({ summary: 'Create a new employee' })
-    @ApiBody({
-        description: 'new data to add',
-        schema: {
-            example: {
-                "firstName": "agung",
-                "lastName": "sumber",
-                "position": "security",
-                "phone": "0123456789",
-                "email": "agung@gmail.com",
-            }
-        },
-    })
-    @ApiOkResponse({
-        description: 'Employee created successfully',
-        schema: {
-            example: {
-                data: {
-                    "firstName": "agung",
-                    "lastName": "jaya",
-                    "position": "security",
-                    "phone": "0123456789",
-                    "email": "agung@gmail.com",
-                    "_id": "6640dbdf9c0c487fcc041e70",
-                    "__v": 0
-                }
-            }
-        }
-    })
-    async create(@Body() createEmployeeDto: CreateEmployeeDto): Promise<AppResponseInterface<Employee>> {
-        const data = await this.employeesService.create(createEmployeeDto)
-        return new SuccessResponse(data)
-    }
     
     @Put()
     @ApiOperation({ summary: 'Update existing employees' })
@@ -137,27 +102,5 @@ export class EmployeesController {
     async bulkUpdate(@Body() bulkUpdateDto: BulkUpdateDto[]): Promise<AppResponseInterface<any>> {
         await this.employeesService.bulkUpdate(bulkUpdateDto)
         return new SuccessResponse(null)
-    }
-
-    @Delete(':id')
-    @ApiOperation({ summary: 'Delete an existing employee' })
-    @ApiParam({ name: 'id', description: 'Employee ID' })
-    @ApiOkResponse({ 
-        description: 'Employee deleted successfully',
-        schema: {
-            example: {
-                "_id": "6640ad082a5e9cf27c06a4fd",
-                "firstName": "john",
-                "lastName": "smithh",
-                "position": "Janitor",
-                "phone": "0123456789",
-                "email": "sarno@gmail.com",
-                "__v": 0
-            }
-        }
-    })
-    async delete(@Param('id') id: string) : Promise<AppResponseInterface<Employee>> {
-        const data = await this.employeesService.delete(id)
-        return new SuccessResponse(data)
     }
 }
